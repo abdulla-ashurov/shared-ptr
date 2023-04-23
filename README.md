@@ -9,16 +9,17 @@
 
 All specializations of `shared_ptr` meet the requirements of `CopyConstructible`, `CopyAssignable`, and `LessThanComparable` and are contextually convertible to `bool`.
 
-### Member functions
+### Member functions of std::shared_ptr
 
 - `(constructor)` - constructs new shared_ptr
   - `shared_ptr()` - default constructor
-  - `shared_ptr(const T &object)` - constructor that accepts T object
+  - `shared_ptr(const T &object)` - constructor that accepts object of type `T`
+  - `shared_ptr(const weak_ptr<T> &ptr)` - constructor that accepts object of type `weak_ptr<T>`
   - `shared_ptr(const shared_ptr<T> &other)` - copy constructor
 - `(destructor)` - destructs the owned object if no more `shared_ptr` link to it
 - `operator=` - assigns the shared_ptr
 
-#### Observers
+#### Observers of std::shared_ptr
 
 - `get` - returns the stored pointer
 - `operator*` - dereferences the stored pointer
