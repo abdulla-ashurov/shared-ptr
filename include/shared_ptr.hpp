@@ -7,7 +7,7 @@ template <class T>
 class shared_ptr {
 private:
     size_t m_counter;
-    aligned_storage<T, sizeof(T)> m_object;
+    aligned_storage<T, 1> m_object;
 
 public:
     // constructors
