@@ -6,11 +6,6 @@
 
 template <class T> 
 class shared_ptr {
-private:
-    size_t m_shared_counter;
-    size_t m_weak_counter;
-    aligned_storage<T, 1> m_object;
-
 public:
     shared_ptr();
     shared_ptr(const T object);

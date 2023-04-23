@@ -5,10 +5,6 @@
 
 template<class T>
 class weak_ptr {
-private:
-    size_t m_counter;
-    shared_ptr<T> *m_ptr;
-
 public:
     weak_ptr();
     weak_ptr(const shared_ptr<T> &other);
