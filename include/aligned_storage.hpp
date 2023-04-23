@@ -1,5 +1,5 @@
-#ifndef __ALIGNED_STORAGE__
-#define __ALIGNED_STORAGE__
+#ifndef __ALIGNED_STORAGE_HPP__
+#define __ALIGNED_STORAGE_HPP__
 
 template <class T, size_t Size>
 class aligned_storage {
@@ -16,4 +16,4 @@ public:
     }
 };
 
-#endif
+#endif // __ALIGNED_STORAGE_HPP__
