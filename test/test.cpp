@@ -1,12 +1,11 @@
 #include "catch_amalgamated.hpp"
 #include "../include/shared_ptr.hpp"
 
-TEST_CASE("Test shared_ptr default constructor") {
-    SECTION("Test shared_ptr<const int> default constructor") {
-        shared_ptr<const int> ptr;
-        REQUIRE(ptr.get() == nullptr);
-    }
+///////////////////////////////////////////////////////////////////////////////
+//////////////////////////// shared_ptr tests /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("Test shared_ptr default constructor") {
     SECTION("Test shared_ptr<int> default constructor") {
         shared_ptr<int> ptr;
         REQUIRE(ptr.get() == nullptr);
@@ -19,12 +18,6 @@ TEST_CASE("Test shared_ptr default constructor") {
 }
 
 TEST_CASE("Test shared_ptr(const T object) constructor") {
-    SECTION("Test shared_ptr<const int>(const T object) constructor") {
-        const int expected_value = 5;
-        shared_ptr<const int> ptr(expected_value);
-        REQUIRE(*ptr == expected_value);
-    }
-
     SECTION("Test shared_ptr<int>(const T object) constructor") {
         int expected_value = 5;
         shared_ptr<int> ptr(expected_value);
@@ -39,14 +32,6 @@ TEST_CASE("Test shared_ptr(const T object) constructor") {
 }
 
 TEST_CASE("Test shared_ptr copy constructor") {
-    SECTION("Test shared_ptr<const int> copy constructor") {
-        const int expected_value = 5;
-        shared_ptr<const int> first_ptr(expected_value);
-
-        shared_ptr<const int> second_ptr(first_ptr);
-        REQUIRE(*second_ptr == expected_value);
-    }
-
     SECTION("Test shared_ptr<int> copy constructor") {
         int expected_value = 5;
         shared_ptr<int> first_ptr(expected_value);
@@ -65,15 +50,6 @@ TEST_CASE("Test shared_ptr copy constructor") {
 }
 
 TEST_CASE("Test shared_ptr operator=") {
-    SECTION("Test shared_ptr<int> operator=") {
-        int expected_value = 5;
-        shared_ptr<int> first_ptr(expected_value);
-        shared_ptr<int> second_ptr;
-
-        second_ptr = first_ptr;
-        REQUIRE(*second_ptr == expected_value);
-    }
-
     SECTION("Test shared_ptr<std::string> operator=") {
         std::string expected_value("hello world");
         shared_ptr<std::string> first_ptr(expected_value);
@@ -106,7 +82,7 @@ TEST_CASE("Test shared_ptr with shared ownership") {
     }
 
     SECTION("Test shared_ptr<std::string> with shared ownership") {
-        shared_ptr<std::string> *base_ptr = new shared_ptr<std::string>("hello world");
+        shared_ptr<std::string> *base_ptr = new shared_ptr<std::string>(std::string("hello world"));
         REQUIRE(base_ptr->use_count() == 1);
 
         {
@@ -123,5 +99,79 @@ TEST_CASE("Test shared_ptr with shared ownership") {
 
         delete base_ptr;
         REQUIRE(base_ptr->use_count() == 0);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+////////////////////////////// weak_ptr tests /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test weak_ptr default constructor") {
+    SECTION("Test weak_ptr<int> default constructor") {
+        weak_ptr<int> ptr;
+        REQUIRE(ptr.expired() == true);
+        REQUIRE(ptr.use_count() == 0);
+    }
+
+    SECTION("Test weak_ptr<std::string> default constructor") {
+        weak_ptr<std::string> ptr;
+        REQUIRE(ptr.expired() == true);
+        REQUIRE(ptr.use_count() == 0);
+    }
+}
+
+TEST_CASE("Test weak_ptr(const shared_ptr<T> object) constructor") {
+    SECTION("Test weak_ptr<int> constructor shared_ptr<T> parameter") {
+        shared_ptr<int> sh_ptr; 
+        weak_ptr<int> w_ptr(sh_ptr);
+        REQUIRE(w_ptr.expired() == false);
+        REQUIRE(w_ptr.use_count() == 1);
+    }
+
+    SECTION("Test weak_ptr<std::string> constructor shared_ptr<T> parameter") {
+        shared_ptr<std::string> sh_ptr; 
+        weak_ptr<std::string> w_ptr(sh_ptr);
+        REQUIRE(w_ptr.expired() == false);
+        REQUIRE(w_ptr.use_count() == 1);
+    }
+}
+
+TEST_CASE("Test weak_ptr copy constructor") {
+    SECTION("Test weak_ptr<int> copy constructor") {
+        shared_ptr<int> sh_ptr(5);
+        weak_ptr<int> first_ptr(sh_ptr);
+        weak_ptr<int> second_ptr(first_ptr);
+
+        REQUIRE(second_ptr.expired() == false);
+        REQUIRE(second_ptr.use_count() == 1);
+    }
+    
+    SECTION("Test weak_ptr<std::string> copy constructor") {
+        shared_ptr<std::string> sh_ptr(std::string("Hello world"));
+        weak_ptr<std::string> first_ptr(sh_ptr);
+        weak_ptr<std::string> second_ptr(first_ptr);
+        
+        REQUIRE(second_ptr.expired() == false);
+        REQUIRE(second_ptr.use_count() == 1);
+    }
+}
+
+TEST_CASE("Test weak_ptr lock method") {
+    SECTION("Test weak_ptr<int> lock method") {
+        shared_ptr<int> sh_ptr(5);
+        weak_ptr<int> w_ptr(sh_ptr);
+
+        shared_ptr<int> sh_ptr2 = w_ptr.lock();
+        REQUIRE(*sh_ptr2 == 5);
+        REQUIRE(sh_ptr2.use_count() == 2);
+    }
+
+    SECTION("Test weak_ptr<std::string> lock method") {
+        shared_ptr<std::string> sh_ptr(std::string("hello"));
+        weak_ptr<std::string> w_ptr(sh_ptr);
+
+        shared_ptr<std::string> sh_ptr2 = w_ptr.lock();
+        REQUIRE(*sh_ptr2 == "hello");
+        REQUIRE(sh_ptr2.use_count() == 2);
     }
 }

@@ -13,8 +13,10 @@ public:
     weak_ptr& operator=(const weak_ptr<T> &other);
     weak_ptr& operator=(const shared_ptr<T> &other);
 
-    long user_count() const;
-    shared_ptr<T> expired() const;
+    shared_ptr<T> lock() const;
+
+    long use_count() const;
+    bool expired() const;
 
     ~weak_ptr();
 };
