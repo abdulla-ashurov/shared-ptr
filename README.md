@@ -52,3 +52,4 @@ Another use for `std::weak_ptr` is to break reference cycles formed by objects m
 
 - `use_count` - returns the number of `shared_ptr` objects referring to the same managed object
 - `expired` - checks whether the referenced object was already deleted
+- `lock` - creates a `shared_ptr` that manages the referenced object
