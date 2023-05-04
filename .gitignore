@@ -33,3 +33,6 @@
 
 # VSCode default settings folder
 .vscode/
+
+# Build folder
+build/
