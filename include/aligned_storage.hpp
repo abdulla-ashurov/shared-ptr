@@ -1,13 +1,18 @@
 #ifndef __ALIGNED_STORAGE__
 #define __ALIGNED_STORAGE__
 
+#include "stdint.h"
+#include <stddef.h>
+
 template <class T>
-class AlignedStorage {
+class AlignedStorage
+{
 private:
     uint8_t storage[sizeof(T) + alignof(T)];
 
 public:
-    T *begin() {
+    T *begin()
+    {
         uintptr_t padding = (uintptr_t)((void *)(storage)) % alignof(T);
         if (padding != 0)
             return (T *)(storage + alignof(T) - padding);
