@@ -15,7 +15,7 @@ private:
     size_t m_weak_count = 0;
 
 public:
-    Storage(const T object)
+    Storage(const T &object)
     {
         new (m_storage.begin()) T(object);
         m_shared_count++;

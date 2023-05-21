@@ -1,9 +1,6 @@
 #ifndef __ALIGNED_STORAGE__
 #define __ALIGNED_STORAGE__
 
-#include "stdint.h"
-#include <stddef.h>
-
 template <class T>
 class AlignedStorage
 {

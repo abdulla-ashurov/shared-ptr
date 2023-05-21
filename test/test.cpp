@@ -1,7 +1,6 @@
 #include "catch_amalgamated.hpp"
 #include "../include/shared_ptr.hpp"
 // #include "../include/weak_ptr.hpp"
-#include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////// shared_ptr tests /////////////////////////////////
@@ -109,7 +108,6 @@ TEST_CASE("Test shared_ptr with shared ownership")
         REQUIRE(base_ptr->use_count() == 1);
 
         delete base_ptr;
-        // REQUIRE(base_ptr->use_count() == 0);
     }
 
     SECTION("Test shared_ptr<std::string> with shared ownership")
@@ -128,7 +126,6 @@ TEST_CASE("Test shared_ptr with shared ownership")
         REQUIRE(base_ptr->use_count() == 1);
 
         delete base_ptr;
-        // REQUIRE(base_ptr->use_count() == 0);
     }
 
     // Add test for testing own class.
