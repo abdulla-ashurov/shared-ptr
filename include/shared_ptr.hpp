@@ -21,6 +21,9 @@ private:
 
             if (m_shared_storage->m_weak_count == 0)
                 delete m_shared_storage;
+            
+
+            m_shared_storage->m_shared_count--;
         }
     }
 
@@ -85,7 +88,6 @@ public:
     ~shared_ptr() {
         if (m_shared_storage) {
             destroy();
-            m_shared_storage->m_shared_count--;
         }
     }
 };
