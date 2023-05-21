@@ -21,10 +21,9 @@ private:
 
             if (m_shared_storage->m_weak_count == 0)
                 delete m_shared_storage;
-            
-
-            m_shared_storage->m_shared_count--;
         }
+
+        m_shared_storage->m_shared_count--;
     }
 
 public:
