@@ -1,5 +1,7 @@
 # Implementation of std::shared_ptr and std::weak_ptr classes
 
+[![Test](https://github.com/abdulla-ashurov/deque/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/abdulla-ashurov/deque/actions/workflows/test.yml)
+
 ## Implementation of std::shared_ptr
 
 `std::shared_ptr` is a smart pointer that retains shared ownership of an object through a pointer. Several `shared_ptr` objects may own the same object. The object is destroyed and its memory deallocated when either of the following happens:
