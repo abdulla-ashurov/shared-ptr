@@ -19,8 +19,6 @@ TEST_CASE("Test shared_ptr default constructor")
         shared_ptr<std::string> ptr;
         REQUIRE(ptr.get() == nullptr);
     }
-
-    // Add test for testing own class.
 }
 
 TEST_CASE("Test shared_ptr(const T object) constructor")
@@ -38,8 +36,6 @@ TEST_CASE("Test shared_ptr(const T object) constructor")
         shared_ptr<std::string> ptr(expected_value);
         REQUIRE(*ptr == expected_value);
     }
-
-    // Add test for testing own class.
 }
 
 TEST_CASE("Test shared_ptr copy constructor")
@@ -61,8 +57,6 @@ TEST_CASE("Test shared_ptr copy constructor")
         shared_ptr<std::string> second_ptr(first_ptr);
         REQUIRE(*second_ptr == expected_value);
     }
-
-    // Add test for testing own class.
 }
 
 TEST_CASE("Test shared_ptr operator=")
@@ -86,8 +80,6 @@ TEST_CASE("Test shared_ptr operator=")
         second_ptr = first_ptr;
         REQUIRE(*second_ptr == expected_value);
     }
-
-    // Add test for testing own class.
 }
 
 TEST_CASE("Test shared_ptr with shared ownership")
@@ -127,8 +119,6 @@ TEST_CASE("Test shared_ptr with shared ownership")
 
         delete base_ptr;
     }
-
-    // Add test for testing own class.
 }
 
 ///////////////////////////////////////////////////////////////////////////////
