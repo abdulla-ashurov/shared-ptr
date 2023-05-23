@@ -136,7 +136,17 @@ public:
         return *this;
     }
 
-    shared_ptr<T> lock() const;
+    shared_ptr<T> lock() const {
+        if (expired()) {
+            return shared_ptr<T>();
+        } else {
+            shared_ptr<T> obj;
+            obj.m_shared_storage = m_shared_storage;
+            obj.m_shared_storage->m_shared_count++;
+            obj.m_shared_storage->m_weak_count--;
+            return obj;
+        }
+    }
 
     size_t use_count() const {
         if (m_shared_storage)

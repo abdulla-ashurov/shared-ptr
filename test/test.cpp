@@ -216,22 +216,24 @@ TEST_CASE("Test weak_ptr operator=(weak_ptr)") {
     }
 }
 
-// TEST_CASE("Test weak_ptr lock method") {
-//     SECTION("Test weak_ptr<int> lock method") {
-//         shared_ptr<int> sh_ptr(5);
-//         weak_ptr<int> w_ptr(sh_ptr);
+TEST_CASE("Test weak_ptr lock method") {
+    SECTION("Test weak_ptr<int> lock method") {
+        int expected_value = 5;
+        shared_ptr<int> sh_ptr(expected_value);
+        weak_ptr<int> w_ptr(sh_ptr);
 
-//         shared_ptr<int> sh_ptr2 = w_ptr.lock();
-//         REQUIRE(*sh_ptr2 == 5);
-//         REQUIRE(sh_ptr2.use_count() == 2);
-//     }
+        shared_ptr<int> sh_ptr2 = w_ptr.lock();
+        REQUIRE(*sh_ptr2 == expected_value);
+        REQUIRE(sh_ptr2.use_count() == 2);
+    }
 
-//     SECTION("Test weak_ptr<std::string> lock method") {
-//         shared_ptr<std::string> sh_ptr(std::string("hello"));
-//         weak_ptr<std::string> w_ptr(sh_ptr);
+    SECTION("Test weak_ptr<std::string> lock method") {
+        std::string expected_value("hello");
+        shared_ptr<std::string> sh_ptr(expected_value);
+        weak_ptr<std::string> w_ptr(sh_ptr);
 
-//         shared_ptr<std::string> sh_ptr2 = w_ptr.lock();
-//         REQUIRE(*sh_ptr2 == "hello");
-//         REQUIRE(sh_ptr2.use_count() == 2);
-//     }
-// }
+        shared_ptr<std::string> sh_ptr2 = w_ptr.lock();
+        REQUIRE(*sh_ptr2 == expected_value);
+        REQUIRE(sh_ptr2.use_count() == 2);
+    }
+}
