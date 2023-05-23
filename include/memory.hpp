@@ -17,6 +17,12 @@ private:
             m_shared_storage->m_shared_count++;
     }
 
+    void copy(const weak_ptr<T> &other) {
+        m_shared_storage = other.m_shared_storage;
+        if (!other.expired())
+            m_shared_storage->m_shared_count++;
+    }
+
     void destroy() {
         if (m_shared_storage->m_shared_count == 1) {
             T *obj = m_shared_storage->m_storage.begin();
@@ -37,9 +43,7 @@ public:
     }
 
     shared_ptr(const weak_ptr<T> &other) {
-        m_shared_storage = other.m_shared_storage;
-        if (m_shared_storage)
-            m_shared_storage->m_shared_count++;
+        copy(other);
     }
     
     shared_ptr(const shared_ptr<T> &other) {
@@ -47,13 +51,11 @@ public:
     }
 
     shared_ptr &operator=(const weak_ptr<T> &other) {
-        if (m_shared_storage != other.m_shared_storage) {
+        shared_ptr<T> obj = other.lock();
+        if (this != &obj) {
             if (m_shared_storage)
                 destroy();
-        
-            m_shared_storage = other.m_shared_storage;
-            if (m_shared_storage)
-                m_shared_storage->m_shared_count++;
+            copy(other);
         }
 
         return *this;
@@ -115,52 +117,65 @@ class weak_ptr
 private:
     Storage<T> *m_shared_storage;
 
-public:
-    weak_ptr() : m_shared_storage(nullptr) {}
-
-    weak_ptr(const shared_ptr<T> &other) {
+    void copy(const shared_ptr<T> &other) {
         m_shared_storage = other.m_shared_storage;
         if (m_shared_storage) {
             m_shared_storage->m_weak_count++;
         }
     }
-    
-    weak_ptr(const weak_ptr<T> &other) {
+
+    void copy(const weak_ptr<T> &other) {
         m_shared_storage = other.m_shared_storage;
         if (m_shared_storage)
             m_shared_storage->m_weak_count++;
     }
 
-    weak_ptr &operator=(const weak_ptr<T> &other) {
-        if (this != &other) {
-            m_shared_storage = other.m_shared_storage;
-            if (m_shared_storage) {
-                m_shared_storage->m_weak_count++;
-            }
+    void destroy() {
+        if (m_shared_storage->m_weak_count == 1)
+            delete m_shared_storage;
+        m_shared_storage->m_weak_count--;
+    }
+
+public:
+    weak_ptr() : m_shared_storage(nullptr) {}
+
+    weak_ptr(const shared_ptr<T> &other) {
+       copy(other);
+    }
+    
+    weak_ptr(const weak_ptr<T> &other) {
+        copy(other);
+    }
+
+    weak_ptr &operator=(const shared_ptr<T> &other) {
+        if (m_shared_storage != other.m_shared_storage) {
+            if (m_shared_storage)
+                destroy();
+            copy(other);
         }
 
         return *this;
     }
 
-    weak_ptr &operator=(const shared_ptr<T> &other) {
-        m_shared_storage = other.m_shared_storage;
-        if (m_shared_storage) {
-            m_shared_storage->m_weak_count++;
+    weak_ptr &operator=(const weak_ptr<T> &other) {
+        if (this != &other) {
+            if (m_shared_storage)
+                destroy();
+            copy(other);
         }
 
         return *this;
     }
 
     shared_ptr<T> lock() const {
-        if (expired()) {
-            return shared_ptr<T>();
-        } else {
-            shared_ptr<T> obj;
+        shared_ptr<T> obj;
+        if (!expired()) {
             obj.m_shared_storage = m_shared_storage;
             obj.m_shared_storage->m_shared_count++;
             obj.m_shared_storage->m_weak_count--;
-            return obj;
         }
+
+        return obj;
     }
 
     size_t use_count() const {
@@ -174,10 +189,13 @@ public:
         return m_shared_storage ? false : true;
     }
 
-    ~weak_ptr() = default;
+    ~weak_ptr() {
+        if (m_shared_storage) {
+            destroy();
+        }
+    }
 
     friend class shared_ptr<T>;
 };
 
 #endif // __MEMORY_HPP__
-
