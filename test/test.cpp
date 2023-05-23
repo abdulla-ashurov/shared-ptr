@@ -37,6 +37,28 @@ TEST_CASE("Test shared_ptr(const T object) constructor")
     }
 }
 
+TEST_CASE("Test shared_ptr(const weak_ptr<T>&)") {
+    SECTION("Test shared_ptr<int>(const weak_ptr<int>&)") {
+        int expected_value = 5;
+        shared_ptr<int> first_ptr(expected_value);
+        weak_ptr<int> w_ptr(first_ptr);
+        
+        shared_ptr<int> second_ptr(w_ptr);
+        REQUIRE(*second_ptr == expected_value);
+        REQUIRE(second_ptr.use_count() == 2);
+    }
+
+    SECTION("Test shared_ptr<std::string>(const weak_ptr<int>&)") {
+        std::string expected_value = "hello";
+        shared_ptr<std::string> first_ptr(expected_value);
+        weak_ptr<std::string> w_ptr(first_ptr);
+        
+        shared_ptr<std::string> second_ptr(w_ptr);
+        REQUIRE(*second_ptr == expected_value);
+        REQUIRE(second_ptr.use_count() == 2);
+    }
+}
+
 TEST_CASE("Test shared_ptr copy constructor")
 {
     SECTION("Test shared_ptr<int> copy constructor")
@@ -78,6 +100,30 @@ TEST_CASE("Test shared_ptr operator=")
 
         second_ptr = first_ptr;
         REQUIRE(*second_ptr == expected_value);
+    }
+}
+
+TEST_CASE("Test shared_ptr operator=(const weak_ptr<T>&)") {
+    SECTION("Test shared_ptr<int>operator=(const weak_ptr<int>&)") {
+        int expected_value = 5;
+        shared_ptr<int> first_ptr(expected_value);
+        weak_ptr<int> w_ptr(first_ptr);
+        
+        shared_ptr<int> second_ptr;
+        second_ptr = w_ptr;
+        REQUIRE(*second_ptr == expected_value);
+        REQUIRE(second_ptr.use_count() == 2);
+    }
+
+    SECTION("Test shared_ptr<std::string>operator=(const weak_ptr<int>&)") {
+        std::string expected_value = "hello";
+        shared_ptr<std::string> first_ptr(expected_value);
+        weak_ptr<std::string> w_ptr(first_ptr);
+        
+        shared_ptr<std::string> second_ptr;
+        second_ptr = w_ptr;
+        REQUIRE(*second_ptr == expected_value);
+        REQUIRE(second_ptr.use_count() == 2);
     }
 }
 

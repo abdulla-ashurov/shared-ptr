@@ -2,7 +2,6 @@
 #define __MEMORY_HPP__
 
 #include "storage.hpp"
-#include <iostream>
 
 template <class T>
 class weak_ptr;
@@ -14,7 +13,8 @@ private:
 
     void copy(const shared_ptr<T> &other) {
         m_shared_storage = other.m_shared_storage;
-        m_shared_storage->m_shared_count++;
+        if (m_shared_storage)
+            m_shared_storage->m_shared_count++;
     }
 
     void destroy() {
@@ -36,13 +36,28 @@ public:
         m_shared_storage = new Storage<T>(object);
     }
 
-    // shared_ptr(const weak_ptr<T> &);
+    shared_ptr(const weak_ptr<T> &other) {
+        m_shared_storage = other.m_shared_storage;
+        if (m_shared_storage)
+            m_shared_storage->m_shared_count++;
+    }
     
     shared_ptr(const shared_ptr<T> &other) {
         copy(other);
     }
 
-    // shared_ptr &operator=(const weak_ptr<T> &);
+    shared_ptr &operator=(const weak_ptr<T> &other) {
+        if (m_shared_storage != other.m_shared_storage) {
+            if (m_shared_storage)
+                destroy();
+        
+            m_shared_storage = other.m_shared_storage;
+            if (m_shared_storage)
+                m_shared_storage->m_shared_count++;
+        }
+
+        return *this;
+    }
     
     shared_ptr &operator=(const shared_ptr<T> &other) {
         if (this != &other) {
@@ -160,6 +175,8 @@ public:
     }
 
     ~weak_ptr() = default;
+
+    friend class shared_ptr<T>;
 };
 
 #endif // __MEMORY_HPP__
