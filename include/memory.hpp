@@ -127,7 +127,14 @@ public:
         return *this;
     }
 
-    weak_ptr &operator=(const shared_ptr<T> &other);
+    weak_ptr &operator=(const shared_ptr<T> &other) {
+        m_shared_storage = other.m_shared_storage;
+        if (m_shared_storage) {
+            m_shared_storage->m_weak_count++;
+        }
+
+        return *this;
+    }
 
     shared_ptr<T> lock() const;
 

@@ -174,25 +174,25 @@ TEST_CASE("Test weak_ptr copy constructor") {
     }
 }
 
-// TEST_CASE("Test weak_ptr operator=(shared_ptr)") {
-//     SECTION("Test weak_ptr<int> operator=(shared_ptr)") {
-//         shared_ptr<int> sh_ptr(5);
-//         weak_ptr<int> w_ptr;
-//         w_ptr = sh_ptr;
+TEST_CASE("Test weak_ptr operator=(shared_ptr)") {
+    SECTION("Test weak_ptr<int> operator=(shared_ptr)") {
+        shared_ptr<int> sh_ptr(5);
+        weak_ptr<int> w_ptr;
+        w_ptr = sh_ptr;
 
-//         REQUIRE(w_ptr.expired() == false);
-//         REQUIRE(w_ptr.use_count() == 1);
-//     }
+        REQUIRE(w_ptr.expired() == false);
+        REQUIRE(w_ptr.use_count() == 1);
+    }
 
-//     SECTION("Test weak_ptr<std::string> operator=") {
-//         shared_ptr<std::string> sh_ptr(std::string("hello"));
-//         weak_ptr<std::string> w_ptr;
-//         w_ptr = sh_ptr;
+    SECTION("Test weak_ptr<std::string> operator=") {
+        shared_ptr<std::string> sh_ptr(std::string("hello"));
+        weak_ptr<std::string> w_ptr;
+        w_ptr = sh_ptr;
 
-//         REQUIRE(w_ptr.expired() == false);
-//         REQUIRE(w_ptr.use_count() == 1);
-//     }
-// }
+        REQUIRE(w_ptr.expired() == false);
+        REQUIRE(w_ptr.use_count() == 1);
+    }
+}
 
 TEST_CASE("Test weak_ptr operator=(weak_ptr)") {
     SECTION("Test weak_ptr<int> operator=") {
