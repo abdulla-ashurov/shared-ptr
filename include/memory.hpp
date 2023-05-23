@@ -24,15 +24,14 @@ private:
     }
 
     void destroy() {
-        if (m_shared_storage->m_shared_count == 1) {
+        m_shared_storage->m_shared_count--;
+        if (m_shared_storage->m_shared_count == 0) {
             T *obj = m_shared_storage->m_storage.begin();
             obj->~T();
 
             if (m_shared_storage->m_weak_count == 0)
                 delete m_shared_storage;
         }
-
-        m_shared_storage->m_shared_count--;
     }
 
 public:
@@ -131,9 +130,9 @@ private:
     }
 
     void destroy() {
+        m_shared_storage->m_weak_count--;
         if (m_shared_storage->m_weak_count == 1)
             delete m_shared_storage;
-        m_shared_storage->m_weak_count--;
     }
 
 public:

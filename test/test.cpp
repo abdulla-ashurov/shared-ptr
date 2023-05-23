@@ -20,16 +20,16 @@ TEST_CASE("Test shared_ptr default constructor")
     }
 }
 
-TEST_CASE("Test shared_ptr(const T object) constructor")
+TEST_CASE("Test shared_ptr(const T&) constructor")
 {
-    SECTION("Test shared_ptr<int>(const T object) constructor")
+    SECTION("Test shared_ptr<int>(const T&) constructor")
     {
         int expected_value = 5;
         shared_ptr<int> ptr(expected_value);
         REQUIRE(*ptr == expected_value);
     }
 
-    SECTION("Test shared_ptr<std::string>(const T object) constructor")
+    SECTION("Test shared_ptr<std::string>(const T&) constructor")
     {
         std::string expected_value("hello world");
         shared_ptr<std::string> ptr(expected_value);
@@ -37,7 +37,7 @@ TEST_CASE("Test shared_ptr(const T object) constructor")
     }
 }
 
-TEST_CASE("Test shared_ptr(const weak_ptr<T>&)") {
+TEST_CASE("Test shared_ptr(const weak_ptr<T>&) constructor") {
     SECTION("Test shared_ptr<int>(const weak_ptr<int>&)") {
         int expected_value = 5;
         shared_ptr<int> first_ptr(expected_value);
@@ -48,7 +48,7 @@ TEST_CASE("Test shared_ptr(const weak_ptr<T>&)") {
         REQUIRE(second_ptr.use_count() == 2);
     }
 
-    SECTION("Test shared_ptr<std::string>(const weak_ptr<int>&)") {
+    SECTION("Test shared_ptr<std::string>(const weak_ptr<int>&) constructor") {
         std::string expected_value = "hello";
         shared_ptr<std::string> first_ptr(expected_value);
         weak_ptr<std::string> w_ptr(first_ptr);
@@ -283,3 +283,12 @@ TEST_CASE("Test weak_ptr lock method") {
         REQUIRE(sh_ptr2.use_count() == 2);
     }
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////// shared_ptr & weak_ptr tests /////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// TEST_CASE("Test shared ownership with shared_ptr & weak_ptr") {
+//     SECTION("Test shared ownership with shared_ptr<int> & weak_ptr<int>") {
+//         shared_ptr<int> *sh_ptr1 = new shared_ptr<int>();
+//     }
+// }
