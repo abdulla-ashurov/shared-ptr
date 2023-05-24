@@ -284,11 +284,46 @@ TEST_CASE("Test weak_ptr lock method") {
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////
-/////////////////////// shared_ptr & weak_ptr tests /////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-// TEST_CASE("Test shared ownership with shared_ptr & weak_ptr") {
-//     SECTION("Test shared ownership with shared_ptr<int> & weak_ptr<int>") {
-//         shared_ptr<int> *sh_ptr1 = new shared_ptr<int>();
-//     }
-// }
+///////////////////////////////////////////////////////////////////////////
+///////////////////// shared_ptr & weak_ptr tests /////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Test shared ownership with shared_ptr & weak_ptr") {
+    SECTION("Test shared ownership with shared_ptr<int> & weak_ptr<int>") {
+        shared_ptr<int> *sh_ptr1 = new shared_ptr<int>(5);
+        REQUIRE(sh_ptr1->use_count() == 1);
+
+        weak_ptr<int> *w_ptr1 = new weak_ptr<int>(*sh_ptr1);
+        REQUIRE(sh_ptr1->use_count() == 1);
+        REQUIRE(w_ptr1->expired() == false);
+        {
+            shared_ptr<int> sh_ptr2(*w_ptr1);
+            REQUIRE(sh_ptr1->use_count() == 2);
+            REQUIRE(w_ptr1->expired() == false);
+            {
+                weak_ptr<int> w_ptr2;
+                w_ptr2 = *w_ptr1;
+                REQUIRE(w_ptr2.use_count() == 2);
+                REQUIRE(w_ptr2.expired() == false);
+
+                shared_ptr<int> sh_ptr3(w_ptr2);
+                REQUIRE(sh_ptr1->use_count() == 3);
+                REQUIRE(w_ptr2.expired() == false);
+            }
+            REQUIRE(sh_ptr1->use_count() == 2);
+            REQUIRE(w_ptr1->expired() == false);
+
+            shared_ptr<int> sh_ptr3;
+            sh_ptr3 = w_ptr1->lock();
+            REQUIRE(sh_ptr1->use_count() == 3);
+            REQUIRE(w_ptr1->expired() == false);
+        }
+        REQUIRE(sh_ptr1->use_count() == 1);
+        REQUIRE(w_ptr1->expired() == false);
+
+        delete sh_ptr1;
+        REQUIRE(w_ptr1->use_count() == 0);
+        REQUIRE(w_ptr1->expired() == true);
+        delete w_ptr1;
+    }
+}
