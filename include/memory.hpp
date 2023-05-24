@@ -19,7 +19,7 @@ private:
 
     void copy(const weak_ptr<T> &other) {
         m_shared_storage = other.m_shared_storage;
-        if (!other.expired())
+        if (m_shared_storage)
             m_shared_storage->m_shared_count++;
     }
 
