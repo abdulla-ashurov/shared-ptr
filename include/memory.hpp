@@ -121,7 +121,7 @@ private:
     void destroy() {
         if (m_shared_storage) {
             m_shared_storage->m_weak_count--;
-            if (m_shared_storage->m_shared_count == 0 && m_shared_storage->m_weak_count == 1)
+            if (m_shared_storage->m_shared_count == 0 && m_shared_storage->m_weak_count == 0)
                 delete m_shared_storage;
         }
     }
