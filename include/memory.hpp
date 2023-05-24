@@ -39,7 +39,7 @@ private:
 public:
     shared_ptr() : m_shared_storage(nullptr) {}
     
-    shared_ptr(const T &object) {
+    shared_ptr(const T object) {
         m_shared_storage = new Storage<T>(object);
     }
 
