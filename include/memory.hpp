@@ -6,8 +6,6 @@
 template <class T>
 class weak_ptr;
 
-// Divide interface and implementation to header and source files.
-
 template <class T>
 class shared_ptr {
 private:
