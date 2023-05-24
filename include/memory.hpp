@@ -6,6 +6,8 @@
 template <class T>
 class weak_ptr;
 
+// Divide interface and implementation to header and source files.
+
 template <class T>
 class shared_ptr {
 private:
@@ -24,13 +26,15 @@ private:
     }
 
     void destroy() {
-        m_shared_storage->m_shared_count--;
-        if (m_shared_storage->m_shared_count == 0) {
-            T *obj = m_shared_storage->m_storage.begin();
-            obj->~T();
+        if (m_shared_storage) {
+            m_shared_storage->m_shared_count--;
+            if (m_shared_storage->m_shared_count == 0) {
+                T *obj = m_shared_storage->m_storage.begin();
+                obj->~T();
 
-            if (m_shared_storage->m_weak_count == 0)
-                delete m_shared_storage;
+                if (m_shared_storage->m_weak_count == 0)
+                    delete m_shared_storage;
+            }
         }
     }
 
@@ -50,10 +54,8 @@ public:
     }
 
     shared_ptr &operator=(const weak_ptr<T> &other) {
-        shared_ptr<T> obj = other.lock();
-        if (this != &obj) {
-            if (m_shared_storage)
-                destroy();
+        if (m_shared_storage != other.m_shared_storage) {
+            destroy();
             copy(other);
         }
 
@@ -61,9 +63,8 @@ public:
     }
     
     shared_ptr &operator=(const shared_ptr<T> &other) {
-        if (this != &other) {
-            if (m_shared_storage)
-                destroy();
+        if (m_shared_storage != other.m_shared_storage) {
+            destroy();
             copy(other);
         }
 
@@ -78,10 +79,7 @@ public:
     }
 
     T *operator->() const {
-        if (m_shared_storage)
-            return m_shared_storage->m_storage.begin();
-
-        return nullptr;
+        return m_shared_storage ? m_shared_storage->m_storage.begin() : nullptr;
     }
 
     operator bool() const {
@@ -89,22 +87,15 @@ public:
     }
 
     T *get() const {
-        if (m_shared_storage)
-            return m_shared_storage->m_storage.begin();
-
-        return nullptr;
+        return m_shared_storage ? m_shared_storage->m_storage.begin() : nullptr;
     }
 
     size_t use_count() const {
-        if (m_shared_storage)
-            return m_shared_storage->m_shared_count;
-
-        return 0;
+        return m_shared_storage ? m_shared_storage->m_shared_count : 0;
     }
 
     ~shared_ptr() {
-        if (m_shared_storage)
-            destroy();
+        destroy();
     }
 
     friend class weak_ptr<T>;
@@ -130,9 +121,11 @@ private:
     }
 
     void destroy() {
-        m_shared_storage->m_weak_count--;
-        if (m_shared_storage->m_weak_count == 1)
-            delete m_shared_storage;
+        if (m_shared_storage) {
+            m_shared_storage->m_weak_count--;
+            if (m_shared_storage->m_weak_count == 1)
+                delete m_shared_storage;
+        }
     }
 
 public:
@@ -148,8 +141,7 @@ public:
 
     weak_ptr &operator=(const shared_ptr<T> &other) {
         if (m_shared_storage != other.m_shared_storage) {
-            if (m_shared_storage)
-                destroy();
+            destroy();
             copy(other);
         }
 
@@ -157,9 +149,8 @@ public:
     }
 
     weak_ptr &operator=(const weak_ptr<T> &other) {
-        if (this != &other) {
-            if (m_shared_storage)
-                destroy();
+        if (m_shared_storage != other.m_shared_storage) {
+            destroy();
             copy(other);
         }
 
@@ -167,21 +158,11 @@ public:
     }
 
     shared_ptr<T> lock() const {
-        shared_ptr<T> obj;
-        if (!expired()) {
-            obj.m_shared_storage = m_shared_storage;
-            obj.m_shared_storage->m_shared_count++;
-            obj.m_shared_storage->m_weak_count--;
-        }
-
-        return obj;
+        return expired() ? shared_ptr<T>() : shared_ptr<T>(*this);
     }
 
     size_t use_count() const {
-        if (m_shared_storage)
-            return m_shared_storage->m_shared_count;
-
-        return 0;
+        return m_shared_storage ? m_shared_storage->m_shared_count : 0;
     }
 
     bool expired() const {
@@ -189,9 +170,7 @@ public:
     }
 
     ~weak_ptr() {
-        if (m_shared_storage) {
-            destroy();
-        }
+        destroy();
     }
 
     friend class shared_ptr<T>;
